@@ -178,7 +178,7 @@ def _extract_transcript(result: Any) -> str:
 
 def transcribe_audio(
     audio: bytes,
-    filename: str = "clip.webm",
+    filename: str = "clip.wav",
     language_code: str | None = None,
 ) -> tuple[str, str]:
     """Transcribe raw audio bytes and return ``(transcript, language_code)``."""

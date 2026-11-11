@@ -3,7 +3,7 @@
 
 Examples:
     python scripts/test_voice.py --base-url http://localhost:8002
-    python scripts/test_voice.py --audio clip.webm
+    python scripts/test_voice.py --audio clip.wav
 """
 
 from __future__ import annotations
@@ -26,11 +26,11 @@ DEFAULT_TTS_TEXT = (
 
 _AUDIO_CONTENT_TYPES = {
     ".wav": "audio/wav",
-    ".webm": "audio/webm",
     ".mp3": "audio/mpeg",
     ".m4a": "audio/mp4",
     ".ogg": "audio/ogg",
     ".flac": "audio/flac",
+    ".aac": "audio/aac",
 }
 
 
@@ -214,7 +214,7 @@ def run(args: argparse.Namespace) -> int:
     elif not args.skip_stt or not args.skip_chat:
         print(
             "\nNo --audio provided; skipping /voice/transcribe and /voice/chat. "
-            "Pass e.g. --audio clip.webm to test them.",
+            "Pass e.g. --audio clip.wav to test them.",
             file=sys.stderr,
         )
 

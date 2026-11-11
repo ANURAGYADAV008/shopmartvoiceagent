@@ -35,13 +35,11 @@ logger = logging.getLogger(__name__)
 
 voice_router = APIRouter()
 
-_ALLOWED_SUFFIXES = {".wav", ".webm", ".mp3", ".m4a", ".ogg", ".flac"}
+_ALLOWED_SUFFIXES = {".wav", ".mp3", ".m4a", ".ogg", ".flac", ".aac"}
 _CONTENT_TYPE_SUFFIXES = {
     "audio/wav": ".wav",
     "audio/x-wav": ".wav",
     "audio/wave": ".wav",
-    "audio/webm": ".webm",
-    "video/webm": ".webm",
     "audio/mpeg": ".mp3",
     "audio/mp3": ".mp3",
     "audio/mp4": ".m4a",
@@ -50,6 +48,8 @@ _CONTENT_TYPE_SUFFIXES = {
     "audio/ogg": ".ogg",
     "audio/flac": ".flac",
     "audio/x-flac": ".flac",
+    "audio/aac": ".aac",
+    "audio/x-aac": ".aac",
 }
 
 

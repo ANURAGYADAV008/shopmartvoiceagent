@@ -1,0 +1,356 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Instrument+Serif:ital@0;1&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --color-canvas: #f4f1ea;
+  --color-surface: #fffdf8;
+  --color-ink: #1e211d;
+  --color-muted: #74776f;
+  --color-line: #e6e0d4;
+  --color-accent: #e25e2b;
+  --color-accent-dark: #b8471b;
+  --color-accent-soft: #f9e5da;
+  --color-forest: #23352b;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    overflow: hidden;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  button,
+  input,
+  textarea {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  ::selection {
+    background: #f3c8b3;
+    color: #342016;
+  }
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.app-shell {
+  background:
+    radial-gradient(1000px 520px at 50% -10%, #fffaf1 0%, transparent 72%),
+    var(--color-canvas);
+}
+
+.dot-grid {
+  background-image: radial-gradient(#b8ad9b 0.55px, transparent 0.55px);
+  background-size: 18px 18px;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #d7cfbf transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: #d7cfbf;
+  background-clip: content-box;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #c2b7a3;
+  background-clip: content-box;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out both;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.shimmer {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.72) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* Markdown answer styling */
+.markdown {
+  overflow-wrap: anywhere;
+  color: #41453e;
+  font-size: 13.5px;
+  line-height: 1.72;
+}
+
+.markdown > * + * {
+  margin-top: 0.72rem;
+}
+
+.markdown p {
+  margin: 0;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  margin: 0;
+  color: var(--color-ink);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+}
+
+.markdown h1 {
+  font-size: 1.35rem;
+}
+
+.markdown h2 {
+  font-size: 1.12rem;
+}
+
+.markdown h3 {
+  font-size: 0.98rem;
+}
+
+.markdown h4 {
+  font-size: 0.9rem;
+}
+
+.markdown strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.markdown em {
+  color: inherit;
+}
+
+.markdown a {
+  color: var(--color-accent-dark);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.markdown ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.34rem;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.markdown ul li {
+  position: relative;
+  padding-left: 1.1rem;
+}
+
+.markdown ul li::before {
+  position: absolute;
+  top: 0.72em;
+  left: 0.14rem;
+  width: 0.27rem;
+  height: 0.27rem;
+  border-radius: 999px;
+  background: #b8b0a2;
+  content: '';
+}
+
+.markdown ul ul {
+  margin-top: 0.32rem;
+  margin-left: 0.1rem;
+}
+
+.markdown ol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.34rem;
+  margin: 0;
+  padding-left: 1.2rem;
+  list-style: decimal;
+}
+
+.markdown ol > li {
+  padding-left: 0.15rem;
+}
+
+.markdown ol li::marker {
+  color: var(--color-accent-dark);
+  font-weight: 600;
+}
+
+.markdown li > p {
+  display: inline;
+  margin: 0;
+}
+
+.markdown li > p + p {
+  display: block;
+  margin-top: 0.32rem;
+}
+
+.markdown hr {
+  margin: 1rem 0;
+  border: 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.markdown blockquote {
+  margin: 0;
+  border-left: 3px solid var(--color-accent);
+  padding: 0.1rem 0 0.1rem 0.9rem;
+  color: var(--color-muted);
+}
+
+.markdown code {
+  border: 1px solid var(--color-line);
+  border-radius: 0.35rem;
+  background: #f5f0e7;
+  padding: 0.1rem 0.32rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.84em;
+}
+
+.markdown pre {
+  overflow-x: auto;
+  border-radius: 0.85rem;
+  background: #1d241f;
+  padding: 0.9rem 1rem;
+  color: #f5f1e7;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.markdown pre code {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+.markdown img {
+  max-width: 100%;
+  border-radius: 0.75rem;
+}
+
+.markdown-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-line);
+  border-radius: 0.8rem;
+}
+
+.markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.markdown th,
+.markdown td {
+  border-bottom: 1px solid var(--color-line);
+  padding: 0.55rem 0.7rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.markdown tr:last-child td {
+  border-bottom: 0;
+}
+
+.markdown th {
+  background: #faf7f1;
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

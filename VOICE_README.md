@@ -1,12 +1,13 @@
-# ShopSmart Voice — Gnani Prisma + Timbre (backend only)
+# ShopSmart Voice — Gnani Prisma + Timbre
 
 Voice layer on top of the existing RAG agent. No RAG code was changed.
-The frontend lives in a separate project and is **not** included here.
+The React frontend in `frontend/` includes the mic button, transcript
+rendering, and spoken-answer player.
 
 ## Flow
 
 ```
-Mic (browser, MediaRecorder)
+Mic (browser, MediaRecorder → 16 kHz mono WAV)
   -> POST /voice/chat  (audio file, multipart)
   -> Prisma v2.5 transcribes audio -> text
   -> rag_agent_wrapper(text, thread_id)  — SAME agent as POST /rag/
@@ -62,7 +63,7 @@ curl http://localhost:8002/voice/health
 
 # STT only — record a short clip first, e.g. "show me wireless headphones under 2000"
 curl -X POST http://localhost:8002/voice/transcribe \
-  -F "file=@clip.webm" -F "language_code=en-IN"
+  -F "file=@clip.wav" -F "language_code=en-IN"
 
 # TTS only — returns raw MP3
 curl -X POST http://localhost:8002/voice/speak \
@@ -72,10 +73,29 @@ curl -X POST http://localhost:8002/voice/speak \
 
 # Full voice chat — audio in, transcript + RAG answer + spoken MP3 (base64) out
 curl -X POST http://localhost:8002/voice/chat \
-  -F "file=@clip.webm" -F "thread_id=test-1" -F "language_code=en-IN"
+  -F "file=@clip.wav" -F "thread_id=test-1" -F "language_code=en-IN"
 ```
 
-Or run the script: `python scripts/test_voice.py --base-url http://localhost:8002 --audio clip.webm`
+Or run the script: `python scripts/test_voice.py --base-url http://localhost:8002 --audio clip.wav`
+
+## Frontend
+
+The React app in `frontend/` already uses these endpoints:
+
+- `useVoiceRecorder` captures a webm/m4a clip with MediaRecorder (60 s max) and
+  handles permission and device errors. `transcodeToWav()` then decodes it and
+  sends 16 kHz mono WAV, because Gnani does not accept WebM.
+- The mic stays disabled until `GET /voice/health` reports `configured: true`.
+- `useChat.sendVoice()` posts to `/voice/chat`, swaps the placeholder for the
+  transcript, renders the full answer + products, and plays the returned MP3.
+- Audio exists only as an in-memory Blob URL; `storage.ts` strips it from
+  localStorage, so refreshing never leaves a dead player behind.
+
+Start the backend on `8002`, then run `npm run dev` in `frontend/` and open
+`http://localhost:5173`. The Vite `/api` proxy forwards to the local API.
+
+If `audio_base64` is `null` (TTS failed or `speak=false`), the transcript and
+text answer still render; only the player is omitted.
 
 ## Endpoints
 
@@ -93,7 +113,7 @@ should use this to enable/disable the mic button.
 ### `POST /voice/chat` — multipart form
 | Field | Type | Notes |
 |---|---|---|
-| `file` | file | wav / webm / mp3 / m4a / ogg / flac, max 10 MB (VOICE_MAX_AUDIO_MB) |
+| `file` | file | wav / mp3 / m4a / ogg / flac / aac, max 10 MB (VOICE_MAX_AUDIO_MB) |
 | `thread_id` | string | default `default-thread` — same thread as the text chat, so voice + text share cart/history |
 | `language_code` | string | optional, e.g. `en-IN`, `hi-IN` |
 | `voice` | string | optional Timbre v2.5 voice override, e.g. `Kaveri` |
@@ -143,9 +163,10 @@ to text instead of erroring the whole turn.
 - **Audio is never persisted by the app** — it is read for the one request and
   discarded (Starlette may spool a large upload to a temporary file while the
   request is being parsed).
-- **Browser audio is webm** (MediaRecorder default). Gnani accepts it via
-  `transcribe_bytes(..., filename="clip.webm")`. If a specific browser's webm
-  ever fails, record wav instead.
+- **Browser audio is transcoded to WAV.** MediaRecorder records WebM in
+  Chrome/Edge and m4a in Safari; `frontend/src/lib/audio.ts` decodes the clip
+  and uploads 16 kHz mono PCM WAV. Gnani accepts wav/mp3/m4a/ogg/flac/aac but
+  rejects WebM with `UNSUPPORTED_AUDIO_FORMAT`.
 - **Latency:** voice adds STT + TTS on top of RAG (~6 s/query in the RAGAS
   eval). Expect roughly 8–12 s per voice turn end-to-end.
 - **Don't put the Gnani key in the frontend.** All Gnani calls are server-side.

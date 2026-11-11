@@ -1,0 +1,28 @@
+name: shopsmart
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: shopsmart-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-shopsmart}
+      POSTGRES_USER: ${POSTGRES_USER:-shopsmart}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-shopsmart_dev}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - shopsmart_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-shopsmart} -d ${POSTGRES_DB:-shopsmart}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  shopsmart_pgdata:
